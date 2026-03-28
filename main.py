@@ -1,39 +1,34 @@
-from fastapi import FastAPI
+from fastapi import FastAPI ,HTTPException
 from pydantic import BaseModel
-
-db=[]
-
 app=FastAPI()
-
+db = []
 class Student(BaseModel):
-    id : int
     name : str
-    age : int
+    rollno : int
+    course : str
 
-@app.get('/item')
-def show():
+@app.get('/list')
+def get():
     return db
 
-@app.post('/item')
+@app.post('/')
 def create(student:Student):
     db.append(student)
-    return f'update succefully'
+    return 'upadte successfully'
 
-@app.put('/item')
-def update(student:Student):
-    updatedata = student
-    if db[student.id] == student.id:
-        db[student.id] = updatedata
-        return ' update successfully'
-    return 'not there'
-
-@app.delete('/item')
-def delete(student:Student):
-    if db[student.id] == student.id:
-        del db[student.id]
-        return db
-    return 'not there'
-
-@app.get('/item/{id}')
-def take(id):
+@app.get('/list/{id}')
+def task(id : int):
     return db[id]
+
+@app.put('/update/{id}/{value}')
+def upform(id : int,value:int, student : Student):
+    for index , data in enumerate(db):
+        if data.id == id:
+            db[index].rollno = value
+        return HTTPException(status_code=404,detail='wrong data')
+    return "update succesfully"
+
+@app.delete('/delete/{id}')
+def upform(id : int):
+    db.pop(id)
+    return 'delete succesfully'
